@@ -39,17 +39,6 @@ void* Thread_Main(void* Parameter){
  return 0;
 }
 //------------------------------------------------------------------------------
-/* Function to print an array */
-void printArray(int arr[], int size)
-{
-    int i;
-    for (i=0; i < size; i++){
-        printf("%d ", arr[i]);
-    }
-    printf("\n----------------------------------------------------------------------------\n");
-}
-
-//------------------------------------------------------------------------------
 /**
  * @brief: Convert the given RGB to Hex equivalent.
  * @return  Int equivalent of the converted Hex number
@@ -106,18 +95,12 @@ int main(int argc, char** argv){
   int x, y, fx, fy, winEdgeX, winEdgeY;
   for(y = 0; y < Input.Height; y++){
     winEdgeY = y - (winSizeY/2);
-    if(winEdgeY < 0){
-      winEdgeY = 0;
-    }
-
+ 
     for(x = 0; x < Input.Width*Input.Components; x+= Input.Components){
       // get all the neighboring pixels and put them in and array of 81 items
       // Window will be shrinked near the boundries
       winEdgeX = x - (((int)(winSizeX/2))*Input.Components);
-      if(winEdgeX < 0){
-        winEdgeX = 0;
-      }
-
+      
       int diffX = 0;
       int diffY = 0;
       if((winEdgeX + (winSizeX*Input.Components)) > (Input.Width*Input.Components)){
@@ -126,38 +109,19 @@ int main(int argc, char** argv){
       if((winEdgeY + winSizeY) > Input.Height){
         diffY = (winEdgeY + winSizeY) - Input.Height;
       }
-      int n = (winSizeX - (diffX/Input.Components))*(winSizeY - diffY);
-      neighborPixels = new int[n];
+      neigborPixels = new[(winSizeX - (diffX/Input.Components))*(winSizeY - diffY)];
       int i = 0;
       for(fy = 0; fy < (winSizeY - diffY); fy++){
-	for(fx = 0;fx < ((winSizeX*Input.Components) - diffX); fx+=Input.Components){
+	for(fx = 0;fx < ((winSizeX*Input.Components) - diffX); fx+=Input.Components+){
 	  neighborPixels[i++] = getRGB_Integer(Input.Rows[winEdgeY+fy][winEdgeX+fx+0],Input.Rows[winEdgeY+fy][winEdgeX+fx+1],Input.Rows[winEdgeY+fy][winEdgeX+fx+2]);
         }
+        std::cout << winEdgeX << std::endl;
+	std::cout << winEdgeY << std::endl;
       }
       // Sort this list
-      std::cout << "Before sorting ---------------" << std::endl;
-      printArray(neighborPixels, n);
-      quickSort(neighborPixels, 0, n - 1);
-      std::cout << "After sorting ---------------" << std::endl;
-      printArray(neighborPixels, n); 
       // Save the median of the sorted list to the current pixel
-      int median = neighborPixels[(n - 1)/2];
-      delete[] neighborPixels;
-
-      // Convert the median back to RGB (3 components
-      std::cout << "Size of window ---------------: " << n << std::endl;
-      std::cout << "Median ---------------: " << median << std::endl;
-
-      Output.Rows[y][x + 0] = ((median >> 16) & 0xff)/255.0;
-      Output.Rows[y][x + 1] = ((median >> 8) & 0xff)/255.0;
-      Output.Rows[y][x + 2] = (median & 0xff)/255.0;
-      
-      std::cout << "-------R--------" << (int)Output.Rows[y][x + 0] <<std::endl;
-      std::cout << "-------G--------" << (int)Output.Rows[y][x + 1] <<std::endl;
-      std::cout << "-------B--------" << (int)Output.Rows[y][x + 2] <<std::endl;      
-      break;
+      Output.Rows[y][x] = Input.Rows[y][x];
     }
-    break;
   }
 
   printf("Run time is: %lg ms \n", toc()/(1e-3));

@@ -45,6 +45,7 @@ pthread_mutex_t Mutex; // General-purpose MutEx
 
 // The thread "main" function.  Receives a unique thread ID as parameter
 void* Thread_Main(void* Parameter);
+void  printArray(int arr[], int size);
 int   getRGB_Integer(unsigned char pR, unsigned char pG, unsigned char pB);
 void  quickSort(int* pArray, int pLower_i, int pHigher_i);
 int   partition(int* pArray, int pLower_i, int pHigher_i);

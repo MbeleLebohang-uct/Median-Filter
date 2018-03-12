@@ -16,7 +16,7 @@ LDLIBS  = -L/usr/lib -lm -ljpeg -pthread
 INCLUDE = -ITools
 
 .PHONY: clean Prac2 run
-all:    clean Prac2 run
+all:    clean Prac2
 
 clean:
 	rm -f -r $(PROG) $(OBJS)
