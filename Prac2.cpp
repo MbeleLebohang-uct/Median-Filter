@@ -40,11 +40,11 @@ void* Thread_Main(void* Parameter){
 }
 //------------------------------------------------------------------------------
 /* Function to print an array */
-void printArray(int arr[], int size)
+void printArray(int pArr[], int pSize)
 {
     int i;
-    for (i=0; i < size; i++){
-        printf("%d ", arr[i]);
+    for (i=0; i < pSize; i++){
+        printf("%d ", pArr[i]);
     }
     printf("\n----------------------------------------------------------------------------\n");
 }
@@ -91,88 +91,72 @@ void quickSort(int* pArray, int pLower_i, int pHigher_i){
 //-----------------------------------------------------------------------------
 int main(int argc, char** argv){
   printf("Code is running...");
-  tic();
   Input.Read("Data/small.jpg");
   int winSizeX = 9;
   int winSizeY = 9;
-  //quickSort(arr, 0, n-1);
-  //quickSort(arr, 0, n-1);
   
   if(!Output.Allocate(Input.Width, Input.Height, Input.Components)){ 
     return -2;
   }   
   int* neighborPixels;  
 
+  tic();
   int x, y, fx, fy, winEdgeX, winEdgeY;
   for(y = 0; y < Input.Height; y++){
     winEdgeY = y - (winSizeY/2);
     int diffY = 0;
- //   std::cout << "EdgeY ---------------: "<< winEdgeY << std::endl;
+    // Handle the edge cases in Y direction
     if(winEdgeY < 0){
       diffY = -winEdgeY;
       winEdgeY = 0;
+    }
+    if((winEdgeY + winSizeY) > Input.Height){
+      diffY = (winEdgeY + winSizeY) - Input.Height;
     }
 
     for(x = 0; x < Input.Width*Input.Components; x+= Input.Components){
       // get all the neighboring pixels and put them in and array of 81 items
       // Window will be shrinked near the boundries
       winEdgeX = x - (((int)(winSizeX/2))*Input.Components);
-      //std::cout << "EdgeX ---------------: "<< winEdgeX << std::endl;
+
+      // Handle the edge cases in X direction
       int diffX = 0;
       if(winEdgeX < 0){
         diffX = -winEdgeX;
         winEdgeX = 0;
       }
-
       if((winEdgeX + (winSizeX*Input.Components)) > (Input.Width*Input.Components)){
         diffX = (winEdgeX + (winSizeX*Input.Components)) - (Input.Width*Input.Components);
-      } 
-      if((winEdgeY + winSizeY) > Input.Height){
-        diffY = (winEdgeY + winSizeY) - Input.Height;
       }
-      //std::cout << "X ---------------: " << diffX<< std::endl;
-     // std::cout << "Y ---------------: " << diffY<< std::endl;
+ 
       int n = (winSizeX - (diffX/Input.Components))*(winSizeY - diffY);
       neighborPixels = new int[n];
       int i = 0;
       for(fy = 0; fy < (winSizeY - diffY); fy++){
 	for(fx = 0;fx < ((winSizeX*Input.Components) - diffX); fx+=Input.Components){
 	  neighborPixels[i++] = getRGB_Integer(Input.Rows[winEdgeY+fy][winEdgeX+fx+0],Input.Rows[winEdgeY+fy][winEdgeX+fx+1],Input.Rows[winEdgeY+fy][winEdgeX+fx+2]);
-//          std::cout << Input.Rows[winEdgeY+fy][winEdgeX+fx+0]<< "-----" <<Input.Rows[winEdgeY+fy][winEdgeX+fx+1] << "---------"<< Input.Rows[winEdgeY+fy][winEdgeX+fx+2] << std::endl;
         }
       }
       // Sort this list
-   //   std::cout << "Before sorting ---------------" << std::endl;
-//      printArray(neighborPixels, n);
       quickSort(neighborPixels, 0, n - 1);
-//      std::cout << "After sorting ---------------" << std::endl;
-//      printArray(neighborPixels, n); 
       // Save the median of the sorted list to the current pixel
       int median = neighborPixels[(n - 1)/2];
       delete[] neighborPixels;
 
-      // Convert the median back to RGB (3 components
-  //    std::cout << "Size of window ---------------: " << n << std::endl;
-//      std::cout << "Median ---------------: " << median << std::endl;
-
+      // Convert the median back to RGB (3 components)
       Output.Rows[y][x + 0] = (unsigned char)((median >> 16) & 0xff);
       Output.Rows[y][x + 1] = (unsigned char)((median >> 8) & 0xff);
       Output.Rows[y][x + 2] = (unsigned char)(median & 0xff);
-      
-//      std::cout << "-------R--------" << Output.Rows[y][x + 0] <<std::endl;
-//      std::cout << "-------G--------" << Output.Rows[y][x + 1] <<std::endl;
-//      std::cout << "-------B--------" << Output.Rows[y][x + 2] <<std::endl;      
-  //    break;
-    }
-   // break;
+    }    
   }
- // Write the output image
-  if(!Output.Write("Data/Output1.jpg")){
+  printf("Run time is: %lg ms \n", toc()/(1e-3));
+
+  // Write the output image
+  if(!Output.Write("Data/Output.jpg")){
     printf("Cannot write image\n");
     return -3;
   }
 
-  printf("Run time is: %lg ms \n", toc()/(1e-3));
   printf("Finish...");
 
   return 0;
