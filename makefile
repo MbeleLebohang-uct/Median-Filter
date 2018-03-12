@@ -15,18 +15,18 @@ CC = g++
 LDLIBS  = -L/usr/lib -lm -ljpeg -pthread
 INCLUDE = -ITools
 
-.PHONY: clean Prac2 run
-all:    clean Prac2
+.PHONY: clean Prac2Parallel run
+all:    clean Prac2Parallel
 
 clean:
 	rm -f -r $(PROG) $(OBJS)
 
-Prac2:
-	$(CC) $(INCLUDE) -c Prac2.cpp -o obj/Prac2.o
+Prac2Parallel:
+	$(CC) $(INCLUDE) -c Prac2Parallel.cpp -o obj/Prac2Parallel.o
 	$(CC) $(INCLUDE) -c Tools/JPEG.cpp -o obj/JPEG.o
 	$(CC) $(INCLUDE) -c Tools/Timer.cpp -o obj/Timer.o
-	$(CC) -o bin/Prac2 obj/Prac2.o obj/JPEG.o obj/Timer.o $(LDLIBS)
+	$(CC) -o bin/Prac2Parallel obj/Prac2Parallel.o obj/JPEG.o obj/Timer.o $(LDLIBS)
 
 run:
-	bin/Prac2
+	bin/Prac2Parallel
 
