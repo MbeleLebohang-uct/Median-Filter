@@ -92,7 +92,7 @@ void quickSort(int* pArray, int pLower_i, int pHigher_i){
 int main(int argc, char** argv){
   printf("Code is running...");
   tic();
-  Input.Read("Data/greatwall.jpg");
+  Input.Read("Data/small.jpg");
   int winSizeX = 9;
   int winSizeY = 9;
   //quickSort(arr, 0, n-1);
@@ -138,6 +138,7 @@ int main(int argc, char** argv){
       for(fy = 0; fy < (winSizeY - diffY); fy++){
 	for(fx = 0;fx < ((winSizeX*Input.Components) - diffX); fx+=Input.Components){
 	  neighborPixels[i++] = getRGB_Integer(Input.Rows[winEdgeY+fy][winEdgeX+fx+0],Input.Rows[winEdgeY+fy][winEdgeX+fx+1],Input.Rows[winEdgeY+fy][winEdgeX+fx+2]);
+//          std::cout << Input.Rows[winEdgeY+fy][winEdgeX+fx+0]<< "-----" <<Input.Rows[winEdgeY+fy][winEdgeX+fx+1] << "---------"<< Input.Rows[winEdgeY+fy][winEdgeX+fx+2] << std::endl;
         }
       }
       // Sort this list
@@ -154,16 +155,16 @@ int main(int argc, char** argv){
   //    std::cout << "Size of window ---------------: " << n << std::endl;
 //      std::cout << "Median ---------------: " << median << std::endl;
 
-      Output.Rows[y][x + 0] = ((median >> 16) & 0xff);
-      Output.Rows[y][x + 1] = ((median >> 8) & 0xff);
-      Output.Rows[y][x + 2] = (median & 0xff);
+      Output.Rows[y][x + 0] = (unsigned char)((median >> 16) & 0xff);
+      Output.Rows[y][x + 1] = (unsigned char)((median >> 8) & 0xff);
+      Output.Rows[y][x + 2] = (unsigned char)(median & 0xff);
       
-//      std::cout << "-------R--------" << (int)Output.Rows[y][x + 0] <<std::endl;
-//      std::cout << "-------G--------" << (int)Output.Rows[y][x + 1] <<std::endl;
-//      std::cout << "-------B--------" << (int)Output.Rows[y][x + 2] <<std::endl;      
-//      break;
+//      std::cout << "-------R--------" << Output.Rows[y][x + 0] <<std::endl;
+//      std::cout << "-------G--------" << Output.Rows[y][x + 1] <<std::endl;
+//      std::cout << "-------B--------" << Output.Rows[y][x + 2] <<std::endl;      
+  //    break;
     }
-//    break;
+   // break;
   }
  // Write the output image
   if(!Output.Write("Data/Output1.jpg")){
