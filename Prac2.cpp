@@ -92,7 +92,7 @@ void quickSort(int* pArray, int pLower_i, int pHigher_i){
 int main(int argc, char** argv){
   printf("Code is running...");
   tic();
-  Input.Read("Data/small.jpg");
+  Input.Read("Data/greatwall.jpg");
   int winSizeX = 9;
   int winSizeY = 9;
   //quickSort(arr, 0, n-1);
@@ -106,7 +106,10 @@ int main(int argc, char** argv){
   int x, y, fx, fy, winEdgeX, winEdgeY;
   for(y = 0; y < Input.Height; y++){
     winEdgeY = y - (winSizeY/2);
+    int diffY = 0;
+ //   std::cout << "EdgeY ---------------: "<< winEdgeY << std::endl;
     if(winEdgeY < 0){
+      diffY = -winEdgeY;
       winEdgeY = 0;
     }
 
@@ -114,18 +117,21 @@ int main(int argc, char** argv){
       // get all the neighboring pixels and put them in and array of 81 items
       // Window will be shrinked near the boundries
       winEdgeX = x - (((int)(winSizeX/2))*Input.Components);
+      //std::cout << "EdgeX ---------------: "<< winEdgeX << std::endl;
+      int diffX = 0;
       if(winEdgeX < 0){
+        diffX = -winEdgeX;
         winEdgeX = 0;
       }
 
-      int diffX = 0;
-      int diffY = 0;
       if((winEdgeX + (winSizeX*Input.Components)) > (Input.Width*Input.Components)){
         diffX = (winEdgeX + (winSizeX*Input.Components)) - (Input.Width*Input.Components);
       } 
       if((winEdgeY + winSizeY) > Input.Height){
         diffY = (winEdgeY + winSizeY) - Input.Height;
       }
+      //std::cout << "X ---------------: " << diffX<< std::endl;
+     // std::cout << "Y ---------------: " << diffY<< std::endl;
       int n = (winSizeX - (diffX/Input.Components))*(winSizeY - diffY);
       neighborPixels = new int[n];
       int i = 0;
@@ -135,29 +141,34 @@ int main(int argc, char** argv){
         }
       }
       // Sort this list
-      std::cout << "Before sorting ---------------" << std::endl;
-      printArray(neighborPixels, n);
+   //   std::cout << "Before sorting ---------------" << std::endl;
+//      printArray(neighborPixels, n);
       quickSort(neighborPixels, 0, n - 1);
-      std::cout << "After sorting ---------------" << std::endl;
-      printArray(neighborPixels, n); 
+//      std::cout << "After sorting ---------------" << std::endl;
+//      printArray(neighborPixels, n); 
       // Save the median of the sorted list to the current pixel
       int median = neighborPixels[(n - 1)/2];
       delete[] neighborPixels;
 
       // Convert the median back to RGB (3 components
-      std::cout << "Size of window ---------------: " << n << std::endl;
-      std::cout << "Median ---------------: " << median << std::endl;
+  //    std::cout << "Size of window ---------------: " << n << std::endl;
+//      std::cout << "Median ---------------: " << median << std::endl;
 
-      Output.Rows[y][x + 0] = ((median >> 16) & 0xff)/255.0;
-      Output.Rows[y][x + 1] = ((median >> 8) & 0xff)/255.0;
-      Output.Rows[y][x + 2] = (median & 0xff)/255.0;
+      Output.Rows[y][x + 0] = ((median >> 16) & 0xff);
+      Output.Rows[y][x + 1] = ((median >> 8) & 0xff);
+      Output.Rows[y][x + 2] = (median & 0xff);
       
-      std::cout << "-------R--------" << (int)Output.Rows[y][x + 0] <<std::endl;
-      std::cout << "-------G--------" << (int)Output.Rows[y][x + 1] <<std::endl;
-      std::cout << "-------B--------" << (int)Output.Rows[y][x + 2] <<std::endl;      
-      break;
+//      std::cout << "-------R--------" << (int)Output.Rows[y][x + 0] <<std::endl;
+//      std::cout << "-------G--------" << (int)Output.Rows[y][x + 1] <<std::endl;
+//      std::cout << "-------B--------" << (int)Output.Rows[y][x + 2] <<std::endl;      
+//      break;
     }
-    break;
+//    break;
+  }
+ // Write the output image
+  if(!Output.Write("Data/Output1.jpg")){
+    printf("Cannot write image\n");
+    return -3;
   }
 
   printf("Run time is: %lg ms \n", toc()/(1e-3));
